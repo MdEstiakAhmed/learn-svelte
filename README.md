@@ -784,18 +784,18 @@ there are total 5 life cycle hooks.
 <!-- App.svelte -->
 <script>
   import TabA from "./components/TabA.svelte";
-	import TabB from "./components/TabB.svelte";
-	import TabC from "./components/TabC.svelte";
+  import TabB from "./components/TabB.svelte";
+  import TabC from "./components/TabC.svelte";
 
-	let activeTab = TabA;
+  let activeTab = TabA;
 </script>
 
 <div>
-	<button on:click={() => (activeTab = TabA)}>Tab A</button>
-	<button on:click={() => (activeTab = TabB)}>Tab B</button>
-	<button on:click={() => (activeTab = TabC)}>Tab C</button>
+  <button on:click={() => (activeTab = TabA)}>Tab A</button>
+  <button on:click={() => (activeTab = TabB)}>Tab B</button>
+  <button on:click={() => (activeTab = TabC)}>Tab C</button>
 
-	<svelte:component this={activeTab} />
+  <svelte:component this={activeTab} />
 </div>
 ```
 
