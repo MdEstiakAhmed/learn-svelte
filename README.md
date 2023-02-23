@@ -19,6 +19,11 @@
 - [form handling](#form-handling)
 - [Reactive declaration](#reactive-declaration)
 - [Reactive statement](#reactive-statement)
+- [Component concept](#component-concept)
+- [Component props](#component-props)
+- [Context API](#context-api)
+- [Component event](#component-event)
+- [Component event foreword](#component-event-foreword)
 
 ## Introduction:
 
@@ -129,7 +134,7 @@ Svelte is a component framework, where user can use to build high performance we
   <!-- short hand -->
   <h1 {id}>heading</h1>
   <!-- regular -->
-  <p id="{paragraphId}">paragraph</p>
+  <p id={paragraphId}>paragraph</p>
 
   <!-- boolean true -->
   <button {disabled}>disable button</button>
@@ -284,30 +289,30 @@ Svelte is a component framework, where user can use to build high performance we
 
 <div>
   <!-- with modifier -->
-  <form on:submit|preventDefault="{handleSubmitWithoutEvent}">
-    <input type="text" name="test" id="test" bind:value="{test}" />
+  <form on:submit|preventDefault={handleSubmitWithoutEvent}>
+    <input type="text" name="test" id="test" bind:value={test} />
   </form>
 
   <!-- without modifier -->
-  <form on:submit="{handleSubmit}">
+  <form on:submit={handleSubmit}>
     <div>
-      <input type="text" id="name" bind:value="{name}" />
+      <input type="text" id="name" bind:value={name} />
     </div>
     <div>
-      <input type="number" id="number" bind:value="{number}" />
+      <input type="number" id="number" bind:value={number} />
     </div>
     <div>
-      <textarea id="info" bind:value="{info}" />
+      <textarea id="info" bind:value={info} />
     </div>
     <div>
-      <select id="country" bind:value="{country}">
+      <select id="country" bind:value={country}>
         <option value="">Choose one</option>
         <option value="bangladesh">Bangladesh</option>
         <option value="india">india</option>
       </select>
     </div>
     <div>
-      <select id="countries" bind:value="{countries}" multiple>
+      <select id="countries" bind:value={countries} multiple>
         <option value="">Choose one</option>
         <option value="bangladesh">Bangladesh</option>
         <option value="india">India</option>
@@ -316,35 +321,35 @@ Svelte is a component framework, where user can use to build high performance we
       </select>
     </div>
     <div>
-      <input type="checkbox" id="status" bind:checked="{status}" />
+      <input type="checkbox" id="status" bind:checked={status} />
     </div>
     <div>
-      <input type="checkbox" id="skills" bind:group="{skills}" value="html" />
+      <input type="checkbox" id="skills" bind:group={skills} value="html" />
       <label for="skills">HTML</label>
-      <input type="checkbox" id="skills" bind:group="{skills}" value="css" />
+      <input type="checkbox" id="skills" bind:group={skills} value="css" />
       <label for="skills">CSS</label>
-      <input type="checkbox" id="skills" bind:group="{skills}" value="js" />
+      <input type="checkbox" id="skills" bind:group={skills} value="js" />
       <label for="skills">JS</label>
     </div>
     <div>
       <input
         type="radio"
         id="yearsOfExperience"
-        bind:group="{yearsOfExperience}"
+        bind:group={yearsOfExperience}
         value="1"
       />
       <label for="yearsOfExperience">1</label>
       <input
         type="radio"
         id="yearsOfExperience"
-        bind:group="{yearsOfExperience}"
+        bind:group={yearsOfExperience}
         value="2"
       />
       <label for="yearsOfExperience">2</label>
       <input
         type="radio"
         id="yearsOfExperience"
-        bind:group="{yearsOfExperience}"
+        bind:group={yearsOfExperience}
         value="3"
       />
       <label for="yearsOfExperience">3</label>
@@ -435,7 +440,104 @@ Svelte is a component framework, where user can use to build high performance we
 </script>
 
 <Child name="abc" />
-<Child name="{info.name}" />
+<Child name={info.ame} />
 <Child {...info} />
 <Child />
+```
+
+### Context API:
+
+```html
+<!-- Child.svelte -->
+<script>
+  import { getContext } from "svelte";
+  let username = getContext("name-context");
+</script>
+<h1>my name is {username}</h1>
+
+<!-- App.svelte -->
+<script>
+  import { setContext } from "svelte";
+  import Child from "./components/Child.svelte";
+  let name = "abc";
+  setContext("name-context", name);
+</script>
+<Child />
+```
+
+### Component event:
+
+```html
+<!-- Child.svelte -->
+<script>
+    import {createEventDispatcher} from "svelte"
+    const dispatch = createEventDispatcher();
+    function closePopup () {
+        /**
+         * @param {string} type - event name
+         * @param {any} detail - data
+         */
+        dispatch("close", "any data type")
+    }
+</script>
+
+<div>
+    <h1>I am a popup</h1>
+    <button on:click={closePopup}>close</button>
+</div>
+
+<!-- App.svelte -->
+<script>
+	import Child from "./components/Child.svelte"
+	let isShowPopup = true;
+
+	const closePopup = (event) => {
+		isShowPopup = false;
+		console.log(event.detail);
+	}
+</script>
+<div>
+	<button on:click={() => isShowPopup = true}>show popup</button>
+	{#if isShowPopup}
+		<Child on:close={closePopup} />
+	{/if}
+</div>
+```
+
+### Component event foreword:
+
+```html
+<!-- SubChild.svelte -->
+<script>
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
+
+  const showGreat = () => {
+    dispatch("great", "hello");
+  };
+</script>
+
+<div>
+  <button on:click={showGreat}>click me</button>
+</div>
+<!-- Child.svelte -->
+<script>
+  import SubChild from "./SubChild.svelte";
+</script>
+
+<div>
+  <SubChild on:great />
+</div>
+
+<!-- App.svelte -->
+<script>
+  import Child from "./components/Child.svelte";
+
+  const showGreat = (event) => {
+    console.log(event.detail);
+  };
+</script>
+<div>
+  <Child on:great={showGreat} />
+</div>
 ```
