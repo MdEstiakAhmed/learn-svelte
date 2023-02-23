@@ -17,6 +17,7 @@
 - [render list](#render-list)
 - [event handle](#event-handle)
 - [form handling](#form-handling)
+- [`this` bind](#this-bind)
 - [Reactive declaration](#reactive-declaration)
 - [Reactive statement](#reactive-statement)
 - [Component concept](#component-concept)
@@ -29,6 +30,10 @@
 - [Named slot](#named-slot)
 - [Slot props](#slot-props)
 - [Styling in svelte](#styling-in-svelte)
+- [Life cycle hooks](#life-cycle-hooks)
+- [HTTP request](#http-request)
+- [Dynamic component](#dynamic-component)
+- [Special component](#special-component)
 
 ## Introduction:
 
@@ -364,6 +369,21 @@ Svelte is a component framework, where user can use to build high performance we
     </div>
   </form>
 </div>
+```
+
+### `this` bind:
+
+```html
+<script>
+  import { onMount } from "svelte";
+  let inputRef;
+
+  onMount(() => {
+    inputRef.focus();
+  });
+</script>
+
+<input type="text" bind:this={inputRef} />
 ```
 
 ### Reactive declaration:
@@ -710,3 +730,80 @@ Svelte is a component framework, where user can use to build high performance we
 <!-- Child.svelte -->
 <h4>child title</h4>
 ```
+
+### Life cycle hooks:
+
+there are total 5 life cycle hooks.
+
+- `onMount` - execute on load of a component. It also return a function which called at the time of unmount a component. It doesn't render in server-side component.
+- `onDestroy` - execute a function on unmount a function. it run in server side component.
+- `beforeUpdate` - execute immediately before a component update
+- `afterUpdate` - execute immediately after a component update
+- `tick` - return a promise that resolved once any pending state changed have been applied
+
+### HTTP request:
+
+```html
+<script>
+  import { onMount } from "svelte";
+
+  let posts = [];
+  onMount(async () => {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+    posts = await response.json();
+    console.log(posts);
+  });
+</script>
+
+<div>
+  {#each posts as post}
+  <div>
+    <h1>{post.title}</h1>
+    <p>{post.body}</p>
+  </div>
+  {:else}
+  <div>
+    <h1>loading...</h1>
+  </div>
+  {/each}
+</div>
+```
+
+### Dynamic component:
+
+```html
+<!-- TabA.svelte -->
+<h1>tab A</h1>
+
+<!-- TabB.svelte -->
+<h1>tab B</h1>
+
+<!-- TabC.svelte -->
+<h1>tab C</h1>
+
+<!-- App.svelte -->
+<script>
+  import TabA from "./components/TabA.svelte";
+	import TabB from "./components/TabB.svelte";
+	import TabC from "./components/TabC.svelte";
+
+	let activeTab = TabA;
+</script>
+
+<div>
+	<button on:click={() => (activeTab = TabA)}>Tab A</button>
+	<button on:click={() => (activeTab = TabB)}>Tab B</button>
+	<button on:click={() => (activeTab = TabC)}>Tab C</button>
+
+	<svelte:component this={activeTab} />
+</div>
+```
+
+### Special component:
+
+- `svelte:component` - for dynamic component
+- `svelte:self` - allow a component to contain itself recursively
+- `svelte:window` - add event listener to window object
+- `svelte:body` - listen for events that fire on the document body
+- `svelte.head` - insert element in `<head>` tag
+- `svelte:options` - specify compiler options
