@@ -1,3 +1,24 @@
+## Table of content
+- [Introduction](#introduction)
+- [Why Svelte](#why-svelte)
+- [Special notes](#special-notes)
+- [VS code extensions](#vs-code-extensions)
+- [Create command for Svelte application](#create-command-for-svelte-application)
+- [folder and file structure](#folder-and-file-structure)
+- [packages note](#packages-note)
+- [What is `.svelte` file extension](#what-is-`.svelte`-file-extension)
+- [Syntax](#syntax)
+- [Binding text](#binding-text)
+- [Binding HTML](#binding-html)
+- [Binding attributes](#binding-attributes)
+- [Binding classes](#binding-classes)
+- [Conditional render](#conditional-render)
+- [render list](#render-list)
+- [event handle](#event-handle)
+- [form handling](#form-handling)
+- [Reactive declaration](#reactive-declaration)
+- [Reactive statement](#reactive-statement)
+
 ## Introduction:
 
 Svelte is a component framework, where user can use to build high performance web applications. And helps user write application code in a declarative manner.
@@ -12,6 +33,9 @@ Svelte is a component framework, where user can use to build high performance we
 - easy form handling.
 - scoping css from global to local scope.
 - maintain head tag for SPA with the component.
+
+## Special notes:
+- svelte reactivity only works in assigning data.
 
 ## VS code extensions:
 
@@ -214,7 +238,7 @@ Svelte is a component framework, where user can use to build high performance we
 </div>
 ```
 
-### form handling
+### form handling:
 
 ```html
 <!-- App.svelte -->
@@ -261,7 +285,7 @@ Svelte is a component framework, where user can use to build high performance we
   <form on:submit|preventDefault="{handleSubmitWithoutEvent}">
     <input type="text" name="test" id="test" bind:value="{test}" />
   </form>
-  
+
   <!-- without modifier -->
   <form on:submit="{handleSubmit}">
     <div>
@@ -327,5 +351,46 @@ Svelte is a component framework, where user can use to build high performance we
       <button>Submit</button>
     </div>
   </form>
+</div>
+```
+### Reactive declaration:
+
+```html
+<!-- App.svelte -->
+<script>
+    let firstName = "ABC";
+	let lastName = "XYZ";
+	$: fullName = `${firstName} ${lastName}`;
+    let books = [
+		{ title: "Harry Potter and the Sorcerer's stone", author: "J.K. Rowling", price: 10 },
+		{ title: "Jurassic Park", author: "Michael Crichton", price: 20 }
+	];
+	$: totalPrice = books.reduce((acc, book) => acc + book.price, 0);
+</script>
+
+<div>
+    <h2>{firstName} {lastName}</h2>
+	<h2>{fullName}</h2>
+    <h2>{totalPrice}</h2>
+</div>
+```
+
+### Reactive statement:
+<!-- App.svelte -->
+```html
+<script>
+    let volume = 10;
+	$: {
+		if (volume > 0) {
+			document.title = `Volume: ${volume}`;
+		} else {
+			document.title = `Muted`;
+		}
+	}
+</script>
+
+<div>
+    <button on:click={() => volume = 0}>Mute</button>
+	<button on:click={() => volume = 10}>Un-mute</button>
 </div>
 ```
