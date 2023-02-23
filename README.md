@@ -1,4 +1,5 @@
 ## Table of content
+
 - [Introduction](#introduction)
 - [Why Svelte](#why-svelte)
 - [Special notes](#special-notes)
@@ -35,6 +36,7 @@ Svelte is a component framework, where user can use to build high performance we
 - maintain head tag for SPA with the component.
 
 ## Special notes:
+
 - svelte reactivity only works in assigning data.
 
 ## VS code extensions:
@@ -353,30 +355,37 @@ Svelte is a component framework, where user can use to build high performance we
   </form>
 </div>
 ```
+
 ### Reactive declaration:
 
 ```html
 <!-- App.svelte -->
 <script>
-    let firstName = "ABC";
-	let lastName = "XYZ";
-	$: fullName = `${firstName} ${lastName}`;
-    let books = [
-		{ title: "Harry Potter and the Sorcerer's stone", author: "J.K. Rowling", price: 10 },
-		{ title: "Jurassic Park", author: "Michael Crichton", price: 20 }
-	];
-	$: totalPrice = books.reduce((acc, book) => acc + book.price, 0);
+  let firstName = "ABC";
+  let lastName = "XYZ";
+  $: fullName = `${firstName} ${lastName}`;
+  let books = [
+    {
+      title: "Harry Potter and the Sorcerer's stone",
+      author: "J.K. Rowling",
+      price: 10,
+    },
+    { title: "Jurassic Park", author: "Michael Crichton", price: 20 },
+  ];
+  $: totalPrice = books.reduce((acc, book) => acc + book.price, 0);
 </script>
 
 <div>
-    <h2>{firstName} {lastName}</h2>
-	<h2>{fullName}</h2>
-    <h2>{totalPrice}</h2>
+  <h2>{firstName} {lastName}</h2>
+  <h2>{fullName}</h2>
+  <h2>{totalPrice}</h2>
 </div>
 ```
 
 ### Reactive statement:
+
 <!-- App.svelte -->
+
 ```html
 <script>
     let volume = 10;
