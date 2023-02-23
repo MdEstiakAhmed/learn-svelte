@@ -8,7 +8,7 @@
 - [folder and file structure](#folder-and-file-structure)
 - [packages note](#packages-note)
 - [What is `.svelte` file extension](#what-is-`.svelte`-file-extension)
-- [Syntax](#syntax)
+- [Syntax and feature](#syntax-and-feature)
 - [Binding text](#binding-text)
 - [Binding HTML](#binding-html)
 - [Binding attributes](#binding-attributes)
@@ -80,7 +80,7 @@ Svelte is a component framework, where user can use to build high performance we
 - Each \*.svelte file contain 3 parts. script, markup and style.
 - browser doesn't understand .svelte extension. Rollup plugin parse the file for browser.
 
-## Syntax:
+## Syntax and feature:
 
 ### Binding text:
 
@@ -384,9 +384,8 @@ Svelte is a component framework, where user can use to build high performance we
 
 ### Reactive statement:
 
-<!-- App.svelte -->
-
 ```html
+<!-- App.svelte -->
 <script>
     let volume = 10;
 	$: {
@@ -402,4 +401,41 @@ Svelte is a component framework, where user can use to build high performance we
     <button on:click={() => volume = 0}>Mute</button>
 	<button on:click={() => volume = 10}>Un-mute</button>
 </div>
+```
+
+### Component concept:
+
+```html
+<!-- Child.svelte -->
+<h1>I am from child</h1>
+
+<!-- App.svelte -->
+<script>
+  import Child from "./components/Child.svelte";
+</script>
+
+<Child />
+```
+
+### Component props:
+
+```html
+<!-- Child.svelte -->
+<script>
+  export let name = "default";
+</script>
+<h1>my name is {name}</h1>
+
+<!-- App.svelte -->
+<script>
+  import Child from "./components/Child.svelte";
+  let info = {
+    name: "xyz",
+  };
+</script>
+
+<Child name="abc" />
+<Child name="{info.name}" />
+<Child {...info} />
+<Child />
 ```
