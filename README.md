@@ -28,6 +28,7 @@
 - [Slot](#slot)
 - [Named slot](#named-slot)
 - [Slot props](#slot-props)
+- [Styling in svelte](#styling-in-svelte)
 
 ## Introduction:
 
@@ -563,7 +564,7 @@ Svelte is a component framework, where user can use to build high performance we
   import Child from "./components/Child.svelte";
 
   const showGreat = () => {
-    alert("hello")
+    alert("hello");
   };
 </script>
 <div>
@@ -572,13 +573,13 @@ Svelte is a component framework, where user can use to build high performance we
 ```
 
 ### Slot:
+
 ```html
 <!-- Child.svelte -->
 <div>
   <slot>Default content</slot>
 </div>
 
-
 <!-- App.svelte -->
 <script>
   import Child from "./components/Child.svelte";
@@ -586,27 +587,26 @@ Svelte is a component framework, where user can use to build high performance we
 
 <div>
   <Child>
-	<h1>hello</h1>
+    <h1>hello</h1>
   </Child>
   <Child>
-	<h3>hello</h3>
+    <h3>hello</h3>
   </Child>
   <Child />
 </div>
 ```
 
 ### Named slot:
+
 ```html
 <!-- Child.svelte -->
 <div>
   {#if $$slots.header}
-    <slot name="header" />
-  {/if}
-  {#if $$slots.body}
-    <slot name="body" />
-  {/if}
-  {#if $$slots.footer}
-    <slot name="footer" />
+  <slot name="header" />
+  {/if} {#if $$slots.body}
+  <slot name="body" />
+  {/if} {#if $$slots.footer}
+  <slot name="footer" />
   {/if}
 </div>
 
@@ -617,20 +617,21 @@ Svelte is a component framework, where user can use to build high performance we
 
 <div>
   <Child>
-	<div slot="header">
-		<h1>Header</h1>
-	</div>
-	<div slot="body">
-		<p>Body</p>
-	</div>
-	<div slot="footer">
-		<p>Footer</p>
-	</div>
+    <div slot="header">
+      <h1>Header</h1>
+    </div>
+    <div slot="body">
+      <p>Body</p>
+    </div>
+    <div slot="footer">
+      <p>Footer</p>
+    </div>
   </Child>
 </div>
 ```
 
 ### Slot props:
+
 ```html
 <!-- Child.svelte -->
 <script>
@@ -642,7 +643,7 @@ Svelte is a component framework, where user can use to build high performance we
 </script>
 
 {#each users as user}
-  <slot name="user" firstName={user.firstName} lastName={user.lastName} />
+<slot name="user" firstName={user.firstName} lastName={user.lastName} />
 {/each}
 
 <!-- App.svelte -->
@@ -652,15 +653,60 @@ Svelte is a component framework, where user can use to build high performance we
 
 <div>
   <Child>
-	<h3 slot="user" let:firstName let:lastName>
-		{firstName} {lastName}
-	</h3>
+    <h3 slot="user" let:firstName let:lastName>{firstName} {lastName}</h3>
   </Child>
 
   <Child>
-	<h3 slot="user" let:firstName>
-		{firstName}
-	</h3>
+    <h3 slot="user" let:firstName>{firstName}</h3>
   </Child>
 </div>
+```
+
+### Styling in svelte:
+
+#### scope style
+
+```html
+<!-- App.svelte -->
+<script>
+  import Child from "./components/Child.svelte";
+</script>
+
+<h4>parent title</h4>
+<Child />
+
+<style>
+  h4 {
+    color: red;
+  }
+</style>
+
+<!-- Child.svelte -->
+<h4>child title</h4>
+<style>
+  h4 {
+    color: blue;
+  }
+</style>
+```
+
+#### global style
+
+```html
+<!-- App.svelte -->
+<script>
+  import Child from "./components/Child.svelte";
+</script>
+
+<h4>parent title</h4>
+<Child />
+
+<style>
+  :global(h4) {
+    color: red;
+  }
+</style>
+
+<!-- Child.svelte -->
+<h4>child title</h4>
 ```
