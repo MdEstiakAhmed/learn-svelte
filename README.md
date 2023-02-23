@@ -24,6 +24,10 @@
 - [Context API](#context-api)
 - [Component event](#component-event)
 - [Component event foreword](#component-event-foreword)
+- [Component event interface create](#component-event-interface-create)
+- [Slot](#slot)
+- [Named slot](#named-slot)
+- [Slot props](#slot-props)
 
 ## Introduction:
 
@@ -539,5 +543,124 @@ Svelte is a component framework, where user can use to build high performance we
 </script>
 <div>
   <Child on:great={showGreat} />
+</div>
+```
+
+### Component event interface create:
+
+```html
+<!-- Child.svelte -->
+<script>
+  import SubChild from "./SubChild.svelte";
+</script>
+
+<div>
+  <SubChild on:great />
+</div>
+
+<!-- App.svelte -->
+<script>
+  import Child from "./components/Child.svelte";
+
+  const showGreat = () => {
+    alert("hello")
+  };
+</script>
+<div>
+  <Child on:great={showGreat} />
+</div>
+```
+
+### Slot:
+```html
+<!-- Child.svelte -->
+<div>
+  <slot>Default content</slot>
+</div>
+
+
+<!-- App.svelte -->
+<script>
+  import Child from "./components/Child.svelte";
+</script>
+
+<div>
+  <Child>
+	<h1>hello</h1>
+  </Child>
+  <Child>
+	<h3>hello</h3>
+  </Child>
+  <Child />
+</div>
+```
+
+### Named slot:
+```html
+<!-- Child.svelte -->
+<div>
+  {#if $$slots.header}
+    <slot name="header" />
+  {/if}
+  {#if $$slots.body}
+    <slot name="body" />
+  {/if}
+  {#if $$slots.footer}
+    <slot name="footer" />
+  {/if}
+</div>
+
+<!-- App.svelte -->
+<script>
+  import Child from "./components/Child.svelte";
+</script>
+
+<div>
+  <Child>
+	<div slot="header">
+		<h1>Header</h1>
+	</div>
+	<div slot="body">
+		<p>Body</p>
+	</div>
+	<div slot="footer">
+		<p>Footer</p>
+	</div>
+  </Child>
+</div>
+```
+
+### Slot props:
+```html
+<!-- Child.svelte -->
+<script>
+  let users = [
+    { firstName: "John", lastName: "cine" },
+    { firstName: "Jane", lastName: "water" },
+    { firstName: "Jack", lastName: "man" },
+  ];
+</script>
+
+{#each users as user}
+  <slot name="user" firstName={user.firstName} lastName={user.lastName} />
+{/each}
+
+<!-- App.svelte -->
+<script>
+  import Child from "./components/Child.svelte";
+</script>
+
+<div>
+  <Child>
+	<h3 slot="user" let:firstName let:lastName>
+		{firstName} {lastName}
+	</h3>
+  </Child>
+
+  <Child>
+	<h3 slot="user" let:firstName>
+		{firstName}
+	</h3>
+  </Child>
 </div>
 ```
