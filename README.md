@@ -35,6 +35,13 @@
 - [Dynamic component](#dynamic-component)
 - [Special component](#special-component)
 - [Module context](#module-context)
+- [Store](#store)
+  - [Create a store](#create-a-store)
+  - [Store types](#store-types)
+  - [writable store](#writable-store)
+  - [readable store](#readable-store)
+  - [derived store](#derived-store)
+  - [Custom store](#custom-store)
 
 ## Introduction:
 
@@ -809,9 +816,10 @@ there are total 5 life cycle hooks.
 - `svelte.head` - insert element in `<head>` tag
 - `svelte:options` - specify compiler options
 
-
 ### Module context:
+
 > variable of module context are not reactive
+
 ```html
 <!-- Child.svelte -->
 <script context="module">
@@ -843,5 +851,193 @@ there are total 5 life cycle hooks.
   <button on:click={() => console.log(getTotalCount())}>get total</button>
   <Child />
   <Child />
+</div>
+```
+
+### Store:
+
+Store in svelte is a feature to share variables across the application. It helps to manage the global states across the application.
+
+#### Create a store:
+
+create a `store` folder in `src` and create a `stores.js` file in `store` folder.
+
+#### Store types:
+
+there are 3 types of stores.
+
+- writable
+- readable
+- derived
+
+#### writable store:
+
+```javascript
+// stores.js
+import { writable } from "svelte/store";
+
+export const count = writable(0);
+```
+
+```html
+<!-- App.svelte -->
+<script>
+  import { count } from "./store/stores";
+  import { onDestroy } from "svelte";
+
+  // pattern 1 - subscribe  and unsubscribe
+  let counter;
+  let counterStore = count.subscribe((value) => {
+    counter = value;
+  });
+  onDestroy(counterStore);
+
+  // pattern 2 - use $count
+
+  // handle increment
+  function increment() {
+    count.update((value) => value + 1);
+  }
+  // handle decrement
+  function decrement() {
+    count.update((value) => value - 1);
+  }
+  // handle reset
+  function reset() {
+    count.set(0);
+  }
+</script>
+
+<div>
+  <!-- pattern 1 -->
+  <h2>counter is {counter}</h2>
+  <!-- pattern 2 -->
+  <h2>counter is {$count}</h2>
+  <!-- increment -->
+  <button on:click={increment}>increment</button>
+  <!-- decrement -->
+  <button on:click={decrement}>decrement</button>
+  <!-- reset -->
+  <button on:click={reset}>reset</button>
+</div>
+```
+
+#### readable store:
+
+```javascript
+// stores.js
+import { readable } from "svelte/store";
+
+export const time = readable(new Date(), (set) => {
+  const interval = setInterval(() => {
+    set(new Date());
+  }, 1000);
+
+  return () => {
+    clearInterval(interval);
+  };
+});
+```
+
+```html
+<script>
+  import { time } from "./store/stores";
+
+  const dateFormatter = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+  });
+</script>
+
+<div>
+  <h2>the time is {dateFormatter.format($time)}</h2>
+</div>
+```
+
+#### derived store:
+
+```javascript
+// stores.js
+import { readable, derived } from "svelte/store";
+
+export const time = readable(new Date(), (set) => {
+  const interval = setInterval(() => {
+    set(new Date());
+  }, 1000);
+
+  return () => {
+    clearInterval(interval);
+  };
+});
+
+const start = new Date();
+
+export const elapsed = derived(time, ($time) => {
+  return Math.round(($time - start) / 1000);
+});
+```
+
+```html
+<!-- App.svelte -->
+<script>
+  import { time, elapsed } from "./store/stores";
+
+  const dateFormatter = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    timeZoneName: "short",
+  });
+</script>
+
+<div>
+  <h2>the time is {dateFormatter.format($time)}</h2>
+  <p>elapsed: {$elapsed} seconds</p>
+</div>
+```
+
+#### Custom store:
+
+```javascript
+// stores.js
+import { writable } from "svelte/store";
+
+function createCount() {
+  const { subscribe, set, update } = writable(0);
+
+  return {
+    subscribe,
+    increment: (size = 1) => update((n) => n + size),
+    decrement: (size = 1) => update((n) => n - size),
+    reset: () => set(0),
+  };
+}
+
+export const count = createCount();
+```
+
+```html
+<!-- App.svelte -->
+<script>
+	import {count} from "./store/stores";
+</script>
+
+<div>
+	<h2>counter is {$count}</h2>
+	<!-- increment -->
+	<button on:click={() => count.increment()}>increment by 1</button>
+	<button on:click={() => count.increment(5)}>increment by 5</button>
+	<!-- decrement -->
+	<button on:click={() => count.decrement()}>decrement by 1</button>
+	<button on:click={() => count.decrement(5)}>decrement by 5</button>
+	<!-- reset -->
+	<button on:click={count.reset}>reset</button>
 </div>
 ```
