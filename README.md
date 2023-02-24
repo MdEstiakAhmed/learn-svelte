@@ -34,6 +34,7 @@
 - [HTTP request](#http-request)
 - [Dynamic component](#dynamic-component)
 - [Special component](#special-component)
+- [Module context](#module-context)
 
 ## Introduction:
 
@@ -807,3 +808,40 @@ there are total 5 life cycle hooks.
 - `svelte:body` - listen for events that fire on the document body
 - `svelte.head` - insert element in `<head>` tag
 - `svelte:options` - specify compiler options
+
+
+### Module context:
+> variable of module context are not reactive
+```html
+<!-- Child.svelte -->
+<script context="module">
+  // variable  of module context are not reactive
+  let totalCount = 0;
+
+  export function getTotalCount() {
+    return totalCount;
+  }
+</script>
+<script>
+  let count = 0;
+
+  function handleClick() {
+    count += 1;
+    totalCount += 1;
+  }
+</script>
+
+<h1>{count}</h1>
+<button on:click={handleClick}>Click me</button>
+
+<!-- App.svelte -->
+<script>
+  import Child, {getTotalCount} from "./components/Child.svelte";
+</script>
+
+<div>
+  <button on:click={() => console.log(getTotalCount())}>get total</button>
+  <Child />
+  <Child />
+</div>
+```
