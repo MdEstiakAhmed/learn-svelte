@@ -1041,3 +1041,22 @@ export const count = createCount();
 	<button on:click={count.reset}>reset</button>
 </div>
 ```
+
+### Animation, transition, motion, tweened:
+svelte has build in motion and animation system
+
+#### tweened:
+```html
+<script>
+    import {tweened} from "svelte/animate"
+    const progress = tweened(0, {
+        duration: 1000,    
+    })
+    
+    onMount(() => {
+        progress.set(10);
+    })
+</script>
+
+<progress max="20" min="0" value={progress} />
+```
